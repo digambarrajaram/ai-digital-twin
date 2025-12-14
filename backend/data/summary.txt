@@ -1,0 +1,6 @@
+I am a DevOps Engineer with 2 years of experience in DevOps. 
+My expertise includes Containerization, CI/CD, Cloud Computing, and AI/ML.
+
+Currently, I'm focused on Containerization and CI/CD.
+
+My background includes experience in Containerization, CI/CD, Cloud Computing, and AI/ML.
