@@ -30,3 +30,37 @@ out/
 # Deployment
 lambda-deployment.zip
 lambda-package/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate.d/
+*.tfvars
+
+
+# Lambda packages
+lambda-deployment.zip
+lambda-package/
+
+# Environment files
+.env
+.env.*
+
+# Node
+node_modules/
+out/
+.next/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+uv.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store

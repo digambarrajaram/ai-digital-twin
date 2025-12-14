@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from openai import OpenAI
+
 import os
 from dotenv import load_dotenv
 from typing import Optional, List, Dict
@@ -27,8 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize Bedrock client
+bedrock_client = boto3.client("bedrock-runtime", region_name=os.getenv("AWS_REGION", "us-east-1"))
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "amazon.nova-micro-v1:0")
 
 # Memory storage configuration
 USE_S3 = os.getenv("USE_S3", "false").lower() == "true"
@@ -121,23 +122,43 @@ async def chat(request: ChatRequest):
         # Load conversation history
         conversation = load_conversation(session_id)
 
-        # Build messages for OpenAI
-        messages = [{"role": "system", "content": prompt()}]
-
-        # Add conversation history (keep last 10 messages for context window)
+        # Build messages for Bedrock Converse (requires specific structure)
+        bedrock_messages = []
+        
+        # Add conversation history (last 10 messages)
         for msg in conversation[-10:]:
-            messages.append({"role": msg["role"], "content": msg["content"]})
+            # Map 'assistant' role to 'assistant' and 'user' to 'user'
+            # (Bedrock expects 'assistant' | 'user')
+            role = msg["role"]
+            if role not in ["user", "assistant"]:
+                continue
+                
+            bedrock_messages.append({
+                "role": role,
+                "content": [{"text": msg["content"]}]
+            })
 
         # Add current user message
-        messages.append({"role": "user", "content": request.message})
+        bedrock_messages.append({
+            "role": "user",
+            "content": [{"text": request.message}]
+        })
 
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-4o-mini", 
-            messages=messages
+        # System prompt
+        system_prompts = [{"text": prompt()}]
+
+        # Call Bedrock API
+        response = bedrock_client.converse(
+            modelId=BEDROCK_MODEL_ID,
+            messages=bedrock_messages,
+            system=system_prompts,
+            inferenceConfig={
+                "maxTokens": 1000,
+                "temperature": 0.7
+            }
         )
 
-        assistant_response = response.choices[0].message.content
+        assistant_response = response["output"]["message"]["content"][0]["text"]
 
         # Update conversation history
         conversation.append(
