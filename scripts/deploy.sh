@@ -9,7 +9,7 @@ echo "🚀 Deploying ${PROJECT_NAME} to ${ENVIRONMENT}..."
 # 1. Build Lambda package
 cd "$(dirname "$0")/.."        # project root
 echo "📦 Building Lambda package..."
-(cd backend && uv run deploy.py)
+(cd backend && uv run --with pip deploy.py)
 
 # 2. Terraform workspace & apply
 cd terraform
