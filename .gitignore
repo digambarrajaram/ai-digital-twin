@@ -1,66 +1,41 @@
-# Secrets
-.env
-.env.*
-!.env.example
-
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
-*.egg-info/
-
-# Node.js
-node_modules/
-npm-debug.log
-.next/
-out/
-
-# AWS & Terraform
-.aws/
-.terraform/
-*.tfstate
-*.tfstate.backup
-.terraform.lock.hcl
-
-# IDE
-.vscode/
-.idea/
-
-# Deployment
-lambda-deployment.zip
-lambda-package/
-
 # Terraform
 *.tfstate
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
 terraform.tfstate.d/
-*.tfvars
-
+*.tfvars.secret
 
 # Lambda packages
 lambda-deployment.zip
 lambda-package/
 
+# Memory storage (contains conversation history)
+memory/
+
 # Environment files
 .env
 .env.*
+!.env.example
 
 # Node
 node_modules/
 out/
 .next/
+*.log
 
 # Python
 __pycache__/
 *.pyc
 .venv/
-uv.lock
+venv/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 .DS_Store
+Thumbs.db
+
+# AWS
+.aws/
